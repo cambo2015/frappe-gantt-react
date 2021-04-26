@@ -59,6 +59,7 @@ class App extends React.Component<any, any> {
           onDateChange={(task, start, end) => console.log(task, start, end)}
           onProgressChange={(task, progress) => console.log(task, progress)}
           onTasksChange={tasks => console.log(tasks)}
+          
         />
       </div>
     );

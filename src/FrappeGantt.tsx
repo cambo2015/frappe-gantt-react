@@ -6,6 +6,7 @@ import { ViewMode } from "./ViewMode";
 
 export type FrappeGanttProps = {
   tasks: Task[];
+  customPopupHtml:()=>{}
 } & Partial<FrappeGanttOptionalProps>;
 
 export type FrappeGanttOptionalProps = Readonly<typeof frappeGanttDefaultProps>;
@@ -17,9 +18,7 @@ const frappeGanttDefaultProps = {
   onDateChange: (task: Task, start: Moment, end: Moment) => {},
   onProgressChange: (task: Task, progress: number) => {},
   onViewChange: (mode: ViewMode) => { },
-  options:{}
-  
-  
+  customPopupHtml: (task: Task) => {}
 };
 
 export class FrappeGantt extends React.Component<FrappeGanttProps, any> {
@@ -31,7 +30,7 @@ export class FrappeGantt extends React.Component<FrappeGanttProps, any> {
 
   state = {
     viewMode: null,
-    tasks: []
+    tasks:[]
   };
 
   static getDerivedStateFromProps(nextProps: FrappeGanttProps, state: any) {
@@ -41,6 +40,10 @@ export class FrappeGantt extends React.Component<FrappeGanttProps, any> {
     };
   }
 
+ 
+
+  
+
   componentDidUpdate() {
     if (this._gantt) {
       this._gantt.refresh(this.state.tasks);
@@ -49,7 +52,7 @@ export class FrappeGantt extends React.Component<FrappeGanttProps, any> {
   }
 
   componentDidMount() {
-    
+    console.log(this.props.customPopupHtml)
     this._gantt = new Gantt(this._svg.current, this.state.tasks, {
       on_click: this.props.onClick,
       on_view_change: this.props.onViewChange,
@@ -61,16 +64,23 @@ export class FrappeGantt extends React.Component<FrappeGanttProps, any> {
         this.props.onDateChange!(task, start, end);
         this.props.onTasksChange!(this.props.tasks);
       },
-      ...this.props.options
-      
+      custom_popup_html: (task: Task) => {
+       this.props.customPopupHtml!(task)
+      }
     });
-
     if (this._gantt) {
       this._gantt.change_view_mode(this.state.viewMode);
     }
 
     const midOfSvg = this._svg.current!.clientWidth * 0.5;
     this._target.current!.scrollLeft = midOfSvg;
+  }
+
+  handleDelete(task: Task) {
+    console.log("inside handledelete")
+    const tasks:Task[]=  [...this.state.tasks]
+    const temp = tasks.filter(x => x.name !== task.name)
+    this.setState({...this.state,tasks:temp})
   }
 
   render() {
