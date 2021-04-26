@@ -76,6 +76,8 @@ export class FrappeGantt extends React.Component<FrappeGanttProps, any> {
     this._target.current!.scrollLeft = midOfSvg;
   }
 
+  
+
   handleDelete(task: Task) {
     console.log("inside handledelete")
     const tasks:Task[]=  [...this.state.tasks]
