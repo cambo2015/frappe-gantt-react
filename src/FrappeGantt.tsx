@@ -16,7 +16,10 @@ const frappeGanttDefaultProps = {
   onClick: (task: Task) => {},
   onDateChange: (task: Task, start: Moment, end: Moment) => {},
   onProgressChange: (task: Task, progress: number) => {},
-  onViewChange: (mode: ViewMode) => {}
+  onViewChange: (mode: ViewMode) => { },
+  options:{}
+  
+  
 };
 
 export class FrappeGantt extends React.Component<FrappeGanttProps, any> {
@@ -46,6 +49,7 @@ export class FrappeGantt extends React.Component<FrappeGanttProps, any> {
   }
 
   componentDidMount() {
+    
     this._gantt = new Gantt(this._svg.current, this.state.tasks, {
       on_click: this.props.onClick,
       on_view_change: this.props.onViewChange,
@@ -56,7 +60,9 @@ export class FrappeGantt extends React.Component<FrappeGanttProps, any> {
       on_date_change: (task: Task, start: Moment, end: Moment) => {
         this.props.onDateChange!(task, start, end);
         this.props.onTasksChange!(this.props.tasks);
-      }
+      },
+      ...this.props.options
+      
     });
 
     if (this._gantt) {
